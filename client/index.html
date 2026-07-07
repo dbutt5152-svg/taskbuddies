@@ -957,7 +957,26 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <button class="btn btn-primary btn-full" onclick="submitApply()">Submit Application →</button>
   </div>
 </div>
-
+<!-- ====== AI HELP CHATBOT WIDGET ====== -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Help chat">
+  💬<span class="cf-badge show" id="chatFabBadge"></span>
+</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-hd">
+    <div class="chat-hd-av">🤖</div>
+    <div class="chat-hd-info">
+      <div class="chat-hd-name">TaskBuddies Helper</div>
+      <div class="chat-hd-status"><span class="dot"></span>Always here to help</div>
+    </div>
+    <button class="chat-hd-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-quick" id="chatQuick"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask about TaskBuddies..." onkeydown="if(event.key==='Enter')sendChatMsg()">
+    <button class="chat-send" onclick="sendChatMsg()">➤</button>
+  </div>
+</div>
 <script>
 // ======= CONFIG =======
 // Change this to your deployed backend URL when you go live on Render
