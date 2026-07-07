@@ -357,6 +357,45 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 .alert-green{background:rgba(0,212,160,0.08);border:1px solid var(--border);color:var(--em)}
 .hidden{display:none!important}
 .modal-wide{max-width:520px}
+  /* ============================================================
+   AI HELP CHATBOT (front page widget)
+   ============================================================ */
+.chat-fab{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:var(--em);color:#000;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 6px 24px var(--em-glow);z-index:1500;transition:var(--tr)}
+.chat-fab:hover{transform:scale(1.08) translateY(-2px)}
+.chat-fab .cf-badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--red);border:2px solid var(--bg);display:none}
+.chat-fab .cf-badge.show{display:block}
+.chat-panel{position:fixed;bottom:96px;right:24px;width:360px;max-height:560px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r3);box-shadow:var(--shadow);z-index:1500;display:none;flex-direction:column;overflow:hidden;animation:modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1)}
+.chat-panel.open{display:flex}
+.chat-hd{background:linear-gradient(135deg,var(--em-dark),#00563d);padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-hd-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.chat-hd-info{flex:1;min-width:0}
+.chat-hd-name{font-family:'Fraunces',serif;font-weight:700;color:#fff;font-size:0.92rem}
+.chat-hd-status{font-size:0.72rem;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:5px}
+.chat-hd-status .dot{width:6px;height:6px;border-radius:50%;background:#5be88a}
+.chat-hd-close{width:28px;height:28px;border-radius:8px;border:none;background:rgba(255,255,255,0.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg2)}
+.chat-msg{max-width:84%;padding:10px 13px;border-radius:14px;font-size:0.85rem;line-height:1.5;animation:fadeUp 0.2s ease}
+.chat-msg.bot{background:var(--surface);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:var(--em);color:#000;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+.chat-msg ul{margin:6px 0 2px 18px}
+.chat-msg li{margin-bottom:3px}
+.chat-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 12px;flex-shrink:0;background:var(--bg2)}
+.chat-chip{background:var(--surface);border:1px solid var(--border2);color:var(--em);padding:6px 12px;border-radius:50px;font-size:0.74rem;font-weight:600;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.chat-chip:hover{background:var(--em-ultra);border-color:var(--em)}
+.chat-typing{display:flex;gap:4px;padding:10px 13px;background:var(--surface);border:1px solid var(--border);border-radius:14px;align-self:flex-start;width:fit-content}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--text4);animation:typingBounce 1.2s infinite}
+.chat-typing span:nth-child(2){animation-delay:0.15s}
+.chat-typing span:nth-child(3){animation-delay:0.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:0.5}30%{transform:translateY(-4px);opacity:1}}
+.chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.chat-input-row input{flex:1;padding:10px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.85rem;outline:none}
+.chat-input-row input:focus{border-color:var(--em)}
+.chat-send{width:38px;height:38px;border-radius:50%;background:var(--em);color:#000;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;transition:var(--tr)}
+.chat-send:hover{background:var(--em-light)}
+@media(max-width:480px){
+  .chat-panel{right:10px;left:10px;bottom:86px;width:auto;max-height:70vh}
+  .chat-fab{right:16px;bottom:16px}
+}
 
 /* ============================================================
    MOBILE OPTIMISATION — added
@@ -1691,6 +1730,105 @@ function timeAgo(ts){
   if(h<24) return h+'h ago';
   return Math.floor(h/24)+'d ago';
 }
+  // ============================================================
+// AI HELP CHATBOT (rule-based FAQ, no API key required)
+// ============================================================
+const CHAT_FAQ = [
+  { kws:['account','sign up','signup','register','create account','join'],
+    a:`Creating an account is free and takes under a minute:<ul>
+      <li>Tap <strong>Get Started</strong> in the top right</li>
+      <li>Choose whether you're a <strong>Task Poster</strong> (need things done) or <strong>Task Worker</strong> (do tasks for pay)</li>
+      <li>Fill in your name, email, phone and a password — or just continue with Google</li>
+      <li>You're in! You can switch roles anytime since posting and working aren't exclusive.</li>
+    </ul>` },
+  { kws:['post a task','post task','create task','how to post','need something done'],
+    a:`Posting a task is simple:<ul>
+      <li>Tap <strong>Post a Task</strong> (sign-in required)</li>
+      <li><strong>Step 1:</strong> title, category, description, and any skills needed</li>
+      <li><strong>Step 2:</strong> set your PKR budget, payment type and deadline</li>
+      <li><strong>Step 3:</strong> preview and post — it goes live immediately</li>
+    </ul>You can also drop an exact map pin so workers know precisely where to go.` },
+  { kws:['apply','application','get hired','become a worker','find work','find a task'],
+    a:`To find paid work:<ul>
+      <li>Go to <strong>Browse Tasks</strong> and filter by category, budget or type</li>
+      <li>Open a task and tap <strong>Apply</strong></li>
+      <li>Write a short message on why you're a good fit, your offer in PKR, and estimated time</li>
+      <li>If the poster accepts you, you'll see their contact info and can message them in-app</li>
+    </ul>` },
+  { kws:['payment','pay','jazzcash','bank transfer','escrow','money','withdraw','wallet'],
+    a:`TaskBuddies works 100% in <strong>PKR</strong>:<ul>
+      <li>Posters pay through <strong>JazzCash</strong> or <strong>Bank Transfer</strong></li>
+      <li>Funds are held safely until the poster approves the completed task — that's the escrow protection</li>
+      <li>Workers set their JazzCash number or bank IBAN under <strong>Dashboard → Payment Method</strong></li>
+      <li>Once a task is marked complete, payment releases to the worker's chosen method</li>
+    </ul>` },
+  { kws:['location','map','track','tracking','gps','address','navigate','find the place'],
+    a:`Location features help everyone meet up smoothly:<ul>
+      <li>When posting a task, you can drop a precise <strong>map pin</strong>, not just a city name</li>
+      <li>Once a worker is accepted, they can tap <strong>Share my location</strong> so the poster sees them moving on a live map with ETA</li>
+      <li>You can also message each other directly to confirm details</li>
+    </ul>` },
+  { kws:['message','chat','contact worker','contact poster','talk'],
+    a:`Once an application is accepted, a conversation opens automatically under the <strong>Messages</strong> tab in the navbar — you can chat about task details, timing, and share your live location from there.` },
+  { kws:['delete account','cancel','close account'],
+    a:`You can delete your account anytime from <strong>Dashboard → Settings → Danger Zone</strong>. This is permanent and removes your tasks and data.` },
+  { kws:['fee','commission','charge','cost to use','free'],
+    a:`Signing up and browsing tasks is completely free. Always check the latest fee structure in your account settings, since platform fees can be updated.` },
+];
+const CHAT_QUICK_PROMPTS = ['How do I create an account?','How do I post a task?','How does payment work?','How does location tracking work?'];
+
+function toggleChat(){
+  const panel=document.getElementById('chatPanel');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  document.getElementById('chatFabBadge')?.classList.remove('show');
+  if(opening && !document.getElementById('chatBody').dataset.greeted){
+    document.getElementById('chatBody').dataset.greeted='1';
+    addChatBubble('bot',`Hey! 👋 I'm the TaskBuddies Helper. Ask me how to make an account, post a task, get hired, handle payments, or use location tracking.`);
+    renderChatQuick();
+  }
+}
+function renderChatQuick(){
+  const q=document.getElementById('chatQuick');
+  q.innerHTML = CHAT_QUICK_PROMPTS.map(p=>`<button class="chat-chip" onclick="askChatQuick(this)">${p}</button>`).join('');
+}
+function askChatQuick(el){
+  const text=el.textContent;
+  document.getElementById('chatInput').value=text;
+  sendChatMsg();
+}
+function addChatBubble(who,html){
+  const body=document.getElementById('chatBody');
+  body.insertAdjacentHTML('beforeend', `<div class="chat-msg ${who}">${html}</div>`);
+  body.scrollTop=body.scrollHeight;
+}
+function sendChatMsg(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text) return;
+  addChatBubble('user', escapeHtml(text));
+  input.value='';
+  const body=document.getElementById('chatBody');
+  body.insertAdjacentHTML('beforeend', `<div class="chat-typing" id="chatTyping"><span></span><span></span><span></span></div>`);
+  body.scrollTop=body.scrollHeight;
+  setTimeout(()=>{
+    document.getElementById('chatTyping')?.remove();
+    addChatBubble('bot', findChatAnswer(text));
+    body.scrollTop=body.scrollHeight;
+  }, 500+Math.random()*400);
+}
+function findChatAnswer(text){
+  const lower=text.toLowerCase();
+  let best=null, bestScore=0;
+  for(const entry of CHAT_FAQ){
+    let score=0;
+    for(const kw of entry.kws){ if(lower.includes(kw)) score+=kw.length; }
+    if(score>bestScore){ bestScore=score; best=entry; }
+  }
+  if(best) return best.a;
+  return `I'm not totally sure about that one yet — but here's what I can help with: creating an account, posting a task, applying for work, payments (JazzCash/Bank), location tracking, and messaging. Try asking about one of those, or tap a suggestion below.`;
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // ======= INIT =======
 updateNav(); updateHomeStats(); buildCatGrid();
