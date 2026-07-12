@@ -6,7 +6,7 @@ const taskSchema = new mongoose.Schema({
   category: { type: String, required: true },
   budget: { type: Number, required: true },
   image: { type: String, default: "" },
-  phone: { type: String, required: true },
+  phone: { type: String, default: "" },
   location: { type: String, default: "" },
   skills: { type: String, default: "" },
   paymentType: { type: String, default: "fixed" },
